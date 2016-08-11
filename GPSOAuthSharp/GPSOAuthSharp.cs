@@ -1,23 +1,29 @@
-﻿using System;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DankMemes.GPSOAuthSharp
 {
-    // gpsoauth:__init__.py
-    // URL: https://github.com/simon-weber/gpsoauth/blob/master/gpsoauth/__init__.py
     public class GPSOAuthClient
     {
+
+        // gpsoauth:__init__.py
+        // URL: https://github.com/simon-weber/gpsoauth/blob/master/gpsoauth/__init__.py
         static string b64Key = "AAAAgMom/1a/v0lblO2Ubrt60J2gcuXSljGFQXgcyZWveWLEwo6prwgi3" +
-            "iJIZdodyhKZQrNWp5nKJ3srRXcUW+F1BD3baEVGcmEgqaLZUNBjm057pK" +
-            "RI16kB0YppeGx5qIQ5QjKzsR8ETQbKLNWgRY0QRNVz34kMJR3P/LgHax/" +
-            "6rmf5AAAAAwEAAQ==";
-        static RSAParameters androidKey = GoogleKeyUtils.KeyFromB64(b64Key);
+               "iJIZdodyhKZQrNWp5nKJ3srRXcUW+F1BD3baEVGcmEgqaLZUNBjm057pK" +
+               "RI16kB0YppeGx5qIQ5QjKzsR8ETQbKLNWgRY0QRNVz34kMJR3P/LgHax/" +
+               "6rmf5AAAAAwEAAQ==";
+
+        RsaKeyParameters androidKey = GoogleKeyUtils.KeyFromB64(b64Key);
 
         static string version = "0.0.5";
         static string authUrl = "https://android.clients.google.com/auth";
@@ -33,32 +39,19 @@ namespace DankMemes.GPSOAuthSharp
         }
 
         // _perform_auth_request
-        private Dictionary<string, string> PerformAuthRequest(Dictionary<string, string> data)
+        private async Task<Dictionary<string, string>> PerformAuthRequest(Dictionary<string, string> data)
         {
-            NameValueCollection nvc = new NameValueCollection();
-            foreach (var kvp in data)
+            using (HttpClient client = new HttpClient())
             {
-                nvc.Add(kvp.Key.ToString(), kvp.Value.ToString());
-            }
-            using (WebClient client = new WebClient())
-            {
-                client.Headers.Add(HttpRequestHeader.UserAgent, userAgent);
-                string result;
-                try
-                {
-                    byte[] response = client.UploadValues(authUrl, nvc);
-                    result = Encoding.UTF8.GetString(response);
-                }
-                catch (WebException e)
-                {
-                    result = new StreamReader(e.Response.GetResponseStream()).ReadToEnd();
-                }
+                client.DefaultRequestHeaders.UserAgent.TryParseAdd(userAgent);
+                var postResponse = await client.PostAsync(authUrl, new FormUrlEncodedContent(data.ToArray()));
+                var result = await postResponse.Content.ReadAsStringAsync();
                 return GoogleKeyUtils.ParseAuthResponse(result);
             }
         }
 
         // perform_master_login
-        public Dictionary<string, string> PerformMasterLogin(string service = "ac2dm",
+        public async Task<Dictionary<string, string>> PerformMasterLogin(string service = "ac2dm",
             string deviceCountry = "us", string operatorCountry = "us", string lang = "en", int sdkVersion = 21)
         {
             string signature = GoogleKeyUtils.CreateSignature(email, password, androidKey);
@@ -75,11 +68,11 @@ namespace DankMemes.GPSOAuthSharp
                 { "lang", lang },
                 { "sdk_version", sdkVersion.ToString() }
             };
-            return PerformAuthRequest(dict);
+            return await PerformAuthRequest(dict);
         }
 
         // perform_oauth
-        public Dictionary<string, string> PerformOAuth(string masterToken, string service, string app, string clientSig,
+        public async Task<Dictionary<string, string>> PerformOAuth(string masterToken, string service, string app, string clientSig,
             string deviceCountry = "us", string operatorCountry = "us", string lang = "en", int sdkVersion = 21)
         {
             var dict = new Dictionary<string, string> {
@@ -96,7 +89,7 @@ namespace DankMemes.GPSOAuthSharp
                 { "lang", lang },
                 { "sdk_version", sdkVersion.ToString() }
             };
-            return PerformAuthRequest(dict);
+            return await PerformAuthRequest(dict);
         }
     }
 
@@ -106,8 +99,15 @@ namespace DankMemes.GPSOAuthSharp
     {
         // key_from_b64
         // BitConverter has different endianness, hence the Reverse()
-        public static RSAParameters KeyFromB64(string b64Key)
+        // RSAKeyParams
+        public static RsaKeyParameters KeyFromB64(string b64Key)
         {
+            byte[] publicKeyBytes = Convert.FromBase64String(b64Key);
+            AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKeyBytes);
+            RsaKeyParameters rsaKeyParameters = (RsaKeyParameters)asymmetricKeyParameter;
+            return rsaKeyParameters;
+
+            /*
             byte[] decoded = Convert.FromBase64String(b64Key);
             int modLength = BitConverter.ToInt32(decoded.Take(4).Reverse().ToArray(), 0);
             byte[] mod = decoded.Skip(4).Take(modLength).ToArray();
@@ -116,18 +116,7 @@ namespace DankMemes.GPSOAuthSharp
             RSAParameters rsaKeyInfo = new RSAParameters();
             rsaKeyInfo.Modulus = mod;
             rsaKeyInfo.Exponent = exponent;
-            return rsaKeyInfo;
-        }
-
-        // key_to_struct
-        // Python version returns a string, but we use byte[] to get the same results
-        public static byte[] KeyToStruct(RSAParameters key)
-        {
-            byte[] modLength = { 0x00, 0x00, 0x00, 0x80 };
-            byte[] mod = key.Modulus;
-            byte[] expLength = { 0x00, 0x00, 0x00, 0x03 };
-            byte[] exponent = key.Exponent;
-            return DataTypeUtils.CombineBytes(modLength, mod, expLength, exponent);
+            return rsaKeyInfo;*/
         }
 
         // parse_auth_response
@@ -143,35 +132,29 @@ namespace DankMemes.GPSOAuthSharp
         }
 
         // signature
-        public static string CreateSignature(string email, string password, RSAParameters key)
+        public static string CreateSignature(string email, string password, RsaKeyParameters key)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            /* RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             rsa.ImportParameters(key);
             SHA1 sha1 = SHA1.Create();
             byte[] prefix = { 0x00 };
             byte[] hash = sha1.ComputeHash(GoogleKeyUtils.KeyToStruct(key)).Take(4).ToArray();
             byte[] encrypted = rsa.Encrypt(Encoding.UTF8.GetBytes(email + "\x00" + password), true);
-            return DataTypeUtils.UrlSafeBase64(DataTypeUtils.CombineBytes(prefix, hash, encrypted));
-        }
-    }
+            return DataTypeUtils.UrlSafeBase64(DataTypeUtils.CombineBytes(prefix, hash, encrypted)); */
 
-    class DataTypeUtils
-    {
-        public static string UrlSafeBase64(byte[] byteArray)
+            ISigner sig = SignerUtilities.GetSigner("SHA1withRSA");
+            sig.Init(true, key);
+            var bytesToEncrypt = Encoding.UTF8.GetBytes(email + "\x00" + password);
+            sig.BlockUpdate(bytesToEncrypt, 0, bytesToEncrypt.Length);
+            byte[] signature = sig.GenerateSignature();
+            return UrlSafeBase64(signature);
+        }
+
+        static string UrlSafeBase64(byte[] byteArray)
         {
             return Convert.ToBase64String(byteArray).Replace('+', '-').Replace('/', '_');
         }
-
-        public static byte[] CombineBytes(params byte[][] arrays)
-        {
-            byte[] rv = new byte[arrays.Sum(a => a.Length)];
-            int offset = 0;
-            foreach (byte[] array in arrays)
-            {
-                Buffer.BlockCopy(array, 0, rv, offset, array.Length);
-                offset += array.Length;
-            }
-            return rv;
-        }
     }
+
+
 }
