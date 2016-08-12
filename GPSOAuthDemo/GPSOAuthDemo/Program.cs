@@ -1,57 +1,34 @@
 ﻿using System;
 using DankMemes.GPSOAuthSharp;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace GPSOAuthDemo
 {
-    class Program
+    internal static class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Google account email: ");
-            string email = Console.ReadLine();
-            Console.WriteLine("Password: ");
-            string password = "";
-            ConsoleKeyInfo info = Console.ReadKey(true);
-            while (info.Key != ConsoleKey.Enter)
+            var email = "";
+            var password = "";
+
+            var googleClient = new GPSOAuthClient(email, password);
+            var masterLoginResponse = googleClient.PerformMasterLogin().Result;
+
+            if (masterLoginResponse.ContainsKey("Error"))
             {
-                if (info.Key != ConsoleKey.Backspace)
-                {
-                    Console.Write("*");
-                    password += info.KeyChar;
-                }
-                else if (info.Key == ConsoleKey.Backspace)
-                {
-                    if (!string.IsNullOrEmpty(password))
-                    {
-                        password = password.Substring(0, password.Length - 1);
-                        int pos = Console.CursorLeft;
-                        Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                    }
-                }
-                info = Console.ReadKey(true);
+                throw new Exception($"Google returned an error message: '{masterLoginResponse["Error"]}'");
             }
-            Console.WriteLine();
-            GPSOAuthClient client = new GPSOAuthClient(email, password);
-            Dictionary<string, string> response = client.PerformMasterLogin();
-            string json = JsonConvert.SerializeObject(response, Formatting.Indented);
-            Console.WriteLine(json);
-            if (response.ContainsKey("Token"))
+            if (!masterLoginResponse.ContainsKey("Token"))
             {
-                string token = response["Token"];
-                Dictionary<string, string> oauthResponse = client
-                    .PerformOAuth(token, "sj", "com.google.android.music",
-                    "38918a453d07199354f8b19af05ec6562ced5788");
-                    string oauthJson = JsonConvert.SerializeObject(oauthResponse, Formatting.Indented);
-                    Console.WriteLine(oauthJson);
+                throw new Exception("Token was missing from master login response.");
             }
-            else
+            var oauthResponse = googleClient.PerformOAuth(masterLoginResponse["Token"], "audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com",
+                "com.nianticlabs.pokemongo", "321187995bc7cdc2b5fc91b11a96e2baa8602c62").Result;
+            if (!oauthResponse.ContainsKey("Auth"))
             {
-                Console.WriteLine("MasterLogin failed (check credentials)");
+                throw new Exception("Auth token was missing from oauth login response.");
             }
+            Console.WriteLine("Authenticated through Google.");
+
             Console.ReadLine();
         }
     }
