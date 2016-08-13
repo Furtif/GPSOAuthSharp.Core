@@ -110,8 +110,8 @@ namespace DankMemes.GPSOAuthSharp
 
             var expLength = BitConverter.ToInt32(decodedKey.Skip(modLength + 4).Take(4).Reverse().ToArray(), 0);
             var expBytes = decodedKey.Skip(modLength + 8).Take(expLength).ToArray();
-            
-            return new RsaKeyParameters(false, new BigInteger(1, modBytes), new BigInteger(expBytes));
+
+            return new RsaKeyParameters(false, new BigInteger(1, modBytes), new BigInteger(1, expBytes));
         }
 
         // parse_auth_response
@@ -129,49 +129,28 @@ namespace DankMemes.GPSOAuthSharp
         // signature
         public static string CreateSignature(string email, string password, RsaKeyParameters key)
         {
-            /* RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            rsa.ImportParameters(key);
-            SHA1 sha1 = SHA1.Create();
-            byte[] prefix = { 0x00 };
-            byte[] hash = sha1.ComputeHash(GoogleKeyUtils.KeyToStruct(key)).Take(4).ToArray();
-            byte[] encrypted = rsa.Encrypt(Encoding.UTF8.GetBytes(email + "\x00" + password), true);
-            return DataTypeUtils.UrlSafeBase64(DataTypeUtils.CombineBytes(prefix, hash, encrypted)); */
-            
             var prefix = new byte[] { 0x00 };
             var keyBytes = KeyToStruct(key);
             var bytesToEncrypt = Encoding.UTF8.GetBytes(email + "\x00" + password);
 
-            // SHA1 (Works correctly)
             var messageDigest = new Sha1Digest();
             messageDigest.BlockUpdate(keyBytes, 0, keyBytes.Length);
-            var messageResult = new byte[messageDigest.GetDigestSize()];
-            messageDigest.DoFinal(messageResult, 0);
+            var hash = new byte[messageDigest.GetDigestSize()];
+            messageDigest.DoFinal(hash, 0);
+            hash = hash.Take(4).ToArray();
 
-            messageResult = messageResult.Take(4).ToArray();
-
-            // Encrypted bytes
-            // TODO: Fix this, generates invalid "encrypted" value
-            var encryptEngine = new Pkcs1Encoding(new RsaEngine());
-            encryptEngine.Init(true, key);
-            var encrypted = encryptEngine.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
-
-            return UrlSafeBase64(CombineBytes(prefix, messageResult.Take(4).ToArray(), encrypted));
-//            ISigner sig = SignerUtilities.GetSigner("SHA1withRSA");
-//            sig.Init(false, key);
-//            var bytesToEncrypt = Encoding.UTF8.GetBytes(email + "\x00" + password);
-//            sig.BlockUpdate(bytesToEncrypt, 0, bytesToEncrypt.Length);
-//
-//            byte[] signature = sig.GenerateSignature();
-//
-//            return UrlSafeBase64(signature);
+            var cipher = CipherUtilities.GetCipher("RSA/NONE/OAEPPadding");
+            cipher.Init(true, key);
+            var encrypted = cipher.DoFinal(bytesToEncrypt);
+            return UrlSafeBase64(CombineBytes(prefix, hash.Take(4).ToArray(), encrypted));
         }
 
         public static byte[] KeyToStruct(RsaKeyParameters key)
         {
             byte[] modLength = { 0x00, 0x00, 0x00, 0x80 };
-            byte[] mod = key.Modulus.ToByteArray().Skip(1).ToArray();
+            byte[] mod = key.Modulus.ToByteArrayUnsigned();
             byte[] expLength = { 0x00, 0x00, 0x00, 0x03 };
-            byte[] exponent = key.Exponent.ToByteArray();
+            byte[] exponent = key.Exponent.ToByteArrayUnsigned();
             return CombineBytes(modLength, mod, expLength, exponent);
         }
 
