@@ -1,11 +1,11 @@
 ﻿using System;
-using DankMemes.GPSOAuthSharp;
+using GPSOAuthSharp;
 
 namespace GPSOAuthDemo
 {
     internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var email = "";
             var password = "";

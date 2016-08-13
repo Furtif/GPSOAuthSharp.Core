@@ -1,64 +1,55 @@
-﻿using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Encodings;
-using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
 
-namespace DankMemes.GPSOAuthSharp
+namespace GPSOAuthSharp
 {
+    // ReSharper disable once InconsistentNaming
     public class GPSOAuthClient
     {
+        private const string B64Key = "AAAAgMom/1a/v0lblO2Ubrt60J2gcuXSljGFQXgcyZWveWLEwo6prwgi3" + 
+            "iJIZdodyhKZQrNWp5nKJ3srRXcUW+F1BD3baEVGcmEgqaLZUNBjm057pK" + 
+            "RI16kB0YppeGx5qIQ5QjKzsR8ETQbKLNWgRY0QRNVz34kMJR3P/LgHax/" + 
+            "6rmf5AAAAAwEAAQ==";
+        private const string Version = "0.0.5";
+        private const string AuthUrl = "https://android.clients.google.com/auth";
+        private const string UserAgent = "GPSOAuthSharp/" + Version;
 
-        // gpsoauth:__init__.py
-        // URL: https://github.com/simon-weber/gpsoauth/blob/master/gpsoauth/__init__.py
-        static string b64Key = "AAAAgMom/1a/v0lblO2Ubrt60J2gcuXSljGFQXgcyZWveWLEwo6prwgi3" +
-               "iJIZdodyhKZQrNWp5nKJ3srRXcUW+F1BD3baEVGcmEgqaLZUNBjm057pK" +
-               "RI16kB0YppeGx5qIQ5QjKzsR8ETQbKLNWgRY0QRNVz34kMJR3P/LgHax/" +
-               "6rmf5AAAAAwEAAQ==";
-
-        RsaKeyParameters androidKey = GoogleKeyUtils.KeyFromB64(b64Key);
-
-        static string version = "0.0.5";
-        static string authUrl = "https://android.clients.google.com/auth";
-        static string userAgent = "GPSOAuthSharp/" + version;
-
-        private string email;
-        private string password;
+        private readonly RsaKeyParameters _androidKey = GoogleKeyUtils.KeyFromB64(B64Key);
+        private readonly string _email;
+        private readonly string _password;
 
         public GPSOAuthClient(string email, string password)
         {
-            this.email = email;
-            this.password = password;
+            _email = email;
+            _password = password;
         }
-
-        // _perform_auth_request
+        
         private async Task<Dictionary<string, string>> PerformAuthRequest(Dictionary<string, string> data)
         {
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.UserAgent.TryParseAdd(userAgent);
-                var postResponse = await client.PostAsync(authUrl, new FormUrlEncodedContent(data.ToArray()));
+                client.DefaultRequestHeaders.UserAgent.TryParseAdd(UserAgent);
+                var postResponse = await client.PostAsync(AuthUrl, new FormUrlEncodedContent(data.ToArray()));
                 var result = await postResponse.Content.ReadAsStringAsync();
                 return GoogleKeyUtils.ParseAuthResponse(result);
             }
         }
-
-        // perform_master_login
+        
         public async Task<Dictionary<string, string>> PerformMasterLogin(string service = "ac2dm",
             string deviceCountry = "us", string operatorCountry = "us", string lang = "en", int sdkVersion = 21)
         {
-            string signature = GoogleKeyUtils.CreateSignature(email, password, androidKey);
+            var signature = GoogleKeyUtils.CreateSignature(_email, _password, _androidKey);
             var dict = new Dictionary<string, string> {
                 { "accountType", "HOSTED_OR_GOOGLE" },
-                { "Email", email },
+                { "Email", _email },
                 { "has_permission", 1.ToString() },
                 { "add_account", 1.ToString() },
                 { "EncryptedPasswd",  signature},
@@ -71,14 +62,13 @@ namespace DankMemes.GPSOAuthSharp
             };
             return await PerformAuthRequest(dict);
         }
-
-        // perform_oauth
+        
         public async Task<Dictionary<string, string>> PerformOAuth(string masterToken, string service, string app, string clientSig,
             string deviceCountry = "us", string operatorCountry = "us", string lang = "en", int sdkVersion = 21)
         {
             var dict = new Dictionary<string, string> {
                 { "accountType", "HOSTED_OR_GOOGLE" },
-                { "Email", email },
+                { "Email", _email },
                 { "has_permission", 1.ToString() },
                 { "EncryptedPasswd",  masterToken},
                 { "service", service },
@@ -94,13 +84,8 @@ namespace DankMemes.GPSOAuthSharp
         }
     }
 
-    // gpsoauth:google.py
-    // URL: https://github.com/simon-weber/gpsoauth/blob/master/gpsoauth/google.py
-    static class GoogleKeyUtils
+    internal static class GoogleKeyUtils
     {
-        // key_from_b64
-        // BitConverter has different endianness, hence the Reverse()
-        // RSAKeyParams
         public static RsaKeyParameters KeyFromB64(string b64Key)
         {
             var decodedKey = Convert.FromBase64String(b64Key);
@@ -113,20 +98,14 @@ namespace DankMemes.GPSOAuthSharp
 
             return new RsaKeyParameters(false, new BigInteger(1, modBytes), new BigInteger(1, expBytes));
         }
-
-        // parse_auth_response
+        
         public static Dictionary<string, string> ParseAuthResponse(string text)
         {
-            Dictionary<string, string> responseData = new Dictionary<string, string>();
-            foreach (string line in text.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                string[] parts = line.Split('=');
-                responseData.Add(parts[0], parts[1]);
-            }
-            return responseData;
+            return text.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Split('='))
+                .ToDictionary(parts => parts[0], parts => parts[1]);
         }
 
-        // signature
         public static string CreateSignature(string email, string password, RsaKeyParameters key)
         {
             var prefix = new byte[] { 0x00 };
@@ -137,7 +116,6 @@ namespace DankMemes.GPSOAuthSharp
             messageDigest.BlockUpdate(keyBytes, 0, keyBytes.Length);
             var hash = new byte[messageDigest.GetDigestSize()];
             messageDigest.DoFinal(hash, 0);
-            hash = hash.Take(4).ToArray();
 
             var cipher = CipherUtilities.GetCipher("RSA/NONE/OAEPPadding");
             cipher.Init(true, key);
@@ -145,20 +123,20 @@ namespace DankMemes.GPSOAuthSharp
             return UrlSafeBase64(CombineBytes(prefix, hash.Take(4).ToArray(), encrypted));
         }
 
-        public static byte[] KeyToStruct(RsaKeyParameters key)
+        private static byte[] KeyToStruct(RsaKeyParameters key)
         {
             byte[] modLength = { 0x00, 0x00, 0x00, 0x80 };
-            byte[] mod = key.Modulus.ToByteArrayUnsigned();
+            var mod = key.Modulus.ToByteArrayUnsigned();
             byte[] expLength = { 0x00, 0x00, 0x00, 0x03 };
-            byte[] exponent = key.Exponent.ToByteArrayUnsigned();
+            var exponent = key.Exponent.ToByteArrayUnsigned();
             return CombineBytes(modLength, mod, expLength, exponent);
         }
 
         private static byte[] CombineBytes(params byte[][] arrays)
         {
-            byte[] rv = new byte[arrays.Sum(a => a.Length)];
-            int offset = 0;
-            foreach (byte[] array in arrays)
+            var rv = new byte[arrays.Sum(a => a.Length)];
+            var offset = 0;
+            foreach (var array in arrays)
             {
                 Buffer.BlockCopy(array, 0, rv, offset, array.Length);
                 offset += array.Length;
