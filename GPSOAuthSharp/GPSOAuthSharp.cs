@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Encodings;
 
 namespace GPSOAuthSharp
 {
@@ -117,9 +118,10 @@ namespace GPSOAuthSharp
             var hash = new byte[messageDigest.GetDigestSize()];
             messageDigest.DoFinal(hash, 0);
 
-            var cipher = CipherUtilities.GetCipher("RSA/NONE/OAEPPadding");
+            var cipher = new OaepEncoding(new RsaEngine());
             cipher.Init(true, key);
-            var encrypted = cipher.DoFinal(bytesToEncrypt);
+            var encrypted = cipher.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
+
             return UrlSafeBase64(CombineBytes(prefix, hash.Take(4).ToArray(), encrypted));
         }
 
