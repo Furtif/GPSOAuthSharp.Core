@@ -1,4 +1,4 @@
-# GPSOAuthSharp.NetStandard1
+# GPSOAuthSharp.NetStandard1 [![AppVeyor](https://img.shields.io/appveyor/ci/AeonLucid/gpsoauthsharp-netstandard1/master.svg?maxAge=60)](https://ci.appveyor.com/project/AeonLucid/gpsoauthsharp-netstandard1) [![NuGet](https://img.shields.io/nuget/v/GPSOAuthSharp.NetStandard1.svg?maxAge=60)](https://www.nuget.org/packages/GPSOAuthSharp.NetStandard1)
 
 A .NET client library for Google Play Services OAuth written in C#.
 
