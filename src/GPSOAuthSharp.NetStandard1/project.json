@@ -1,0 +1,30 @@
+{
+  "title": "GPSOAuthSharp.NetStandard1",
+  "description": "A .NET client library for Google Play Services OAuth written in C#.",
+  "authors": [ "AeonLucid" ],
+  "version": "1.0.0",
+  "packOptions": {
+    "summary": "A .NET client library for Google Play Services OAuth written in C#.",
+    "tags": [ "Google Play Services", "GPSOAuth", "netstandard" ],
+    "owners": [ "AeonLucid" ],
+    "iconUrl": "http://i.imgur.com/7vJxPxu.png",
+    "projectUrl": "https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1"
+    }
+  },
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "Portable.BouncyCastle": "1.8.1.1"
+  },
+  "frameworks": {
+    "netstandard1.1": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    }
+  }
+}

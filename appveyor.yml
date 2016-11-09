@@ -1,0 +1,29 @@
+branches:
+  only:
+  - master
+
+assembly_info:
+  patch: false
+
+configuration: Release
+
+platform: Any CPU
+  
+environment:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  
+before_build:
+  - appveyor-retry dotnet restore -v Minimal
+
+build_script:
+  - dotnet build "src\GPSOAuthSharp.NetStandard1" -c %CONFIGURATION% --no-dependencies
+  - dotnet build "demo\GPSOAuthSharp.Demo" -c %CONFIGURATION% --no-dependencies
+  
+after_build:
+  - dotnet pack "src\GPSOAuthSharp.NetStandard1" -c %CONFIGURATION% --no-build -o artifacts
+  
+artifacts:
+  - path: artifacts\**\*.*
+
+cache:
+  - '%USERPROFILE%\.nuget\packages'
