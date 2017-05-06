@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>A .NET client library for Google Play Services OAuth written in C#.</Description>
@@ -15,11 +15,6 @@
     <RepositoryUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</RepositoryUrl>
     <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
     <Version>1.0.1</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_1</DefineConstants>
-    <OutputPath>bin\Debug\netstandard1.1\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
