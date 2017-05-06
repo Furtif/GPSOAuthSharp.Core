@@ -14,6 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</RepositoryUrl>
     <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
