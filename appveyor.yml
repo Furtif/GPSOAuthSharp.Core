@@ -24,6 +24,3 @@ after_build:
   
 artifacts:
   - path: src\GPSOAuthSharp.NetStandard1\artifacts\*.nupkg
-
-cache:
-  - '%USERPROFILE%\.nuget\packages'
