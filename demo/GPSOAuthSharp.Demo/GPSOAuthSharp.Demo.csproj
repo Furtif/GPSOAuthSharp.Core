@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>GPSOAuthSharp.Demo</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>GPSOAuthSharp.Demo</PackageId>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\GPSOAuthSharp.NetStandard1\GPSOAuthSharp.NetStandard1.csproj" />
+  </ItemGroup>
+
+</Project>

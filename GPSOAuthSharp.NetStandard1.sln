@@ -1,35 +1,41 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7FD06913-5FCA-433A-B1BB-D39C07DD66AE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A07DCA47-8D7A-48C4-A8CE-BE42068925E1}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GPSOAuthSharp.NetStandard1", "src\GPSOAuthSharp.NetStandard1\GPSOAuthSharp.NetStandard1.xproj", "{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPSOAuthSharp.NetStandard1", "src\GPSOAuthSharp.NetStandard1\GPSOAuthSharp.NetStandard1.csproj", "{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{7C41DF38-0A65-4334-9C90-96A8427EBF34}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GPSOAuthSharp.Demo", "demo\GPSOAuthSharp.Demo\GPSOAuthSharp.Demo.xproj", "{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPSOAuthSharp.Demo", "demo\GPSOAuthSharp.Demo\GPSOAuthSharp.Demo.csproj", "{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Release|x64.ActiveCfg = Release|Any CPU
+		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}.Release|x86.ActiveCfg = Release|Any CPU
 		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Release|x64.ActiveCfg = Release|Any CPU
+		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

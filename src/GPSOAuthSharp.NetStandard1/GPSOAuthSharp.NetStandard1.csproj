@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>A .NET client library for Google Play Services OAuth written in C#.</Description>
+    <AssemblyTitle>GPSOAuthSharp.NetStandard1</AssemblyTitle>
+    <Authors>AeonLucid</Authors>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>GPSOAuthSharp.NetStandard1</AssemblyName>
+    <PackageId>GPSOAuthSharp.NetStandard1</PackageId>
+    <PackageTags>Google Play Services;GPSOAuth;netstandard</PackageTags>
+    <PackageIconUrl>http://i.imgur.com/7vJxPxu.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</RepositoryUrl>
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.1.2" />
+  </ItemGroup>
+
+</Project>
