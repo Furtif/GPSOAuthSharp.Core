@@ -9,7 +9,7 @@
     <AssemblyName>GPSOAuthSharp.NetStandard1</AssemblyName>
     <PackageId>GPSOAuthSharp.NetStandard1</PackageId>
     <PackageTags>Google Play Services;GPSOAuth;netstandard</PackageTags>
-    <PackageIconUrl>http://i.imgur.com/7vJxPxu.png</PackageIconUrl>
+    <PackageIconUrl>http://i.imgur.com/sIso99f.jpg</PackageIconUrl>
     <PackageProjectUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AeonLucid/GPSOAuthSharp.NetStandard1</RepositoryUrl>
