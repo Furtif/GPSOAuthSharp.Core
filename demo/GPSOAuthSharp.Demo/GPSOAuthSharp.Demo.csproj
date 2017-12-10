@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\GPSOAuthSharp.NetStandard1\GPSOAuthSharp.NetStandard1.csproj" />
+    <ProjectReference Include="..\..\src\GPSOAuthSharp.Core\GPSOAuthSharp.Core.csproj" />
   </ItemGroup>
 
 </Project>

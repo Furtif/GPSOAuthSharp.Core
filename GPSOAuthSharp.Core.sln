@@ -1,14 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7FD06913-5FCA-433A-B1BB-D39C07DD66AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPSOAuthSharp.NetStandard1", "src\GPSOAuthSharp.NetStandard1\GPSOAuthSharp.NetStandard1.csproj", "{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPSOAuthSharp.Core", "src\GPSOAuthSharp.Core\GPSOAuthSharp.Core.csproj", "{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{7C41DF38-0A65-4334-9C90-96A8427EBF34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPSOAuthSharp.Demo", "demo\GPSOAuthSharp.Demo\GPSOAuthSharp.Demo.csproj", "{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GPSOAuthSharp.Demo", "demo\GPSOAuthSharp.Demo\GPSOAuthSharp.Demo.csproj", "{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,5 +43,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{03D5F58F-48A5-4DBB-B6F6-F0818B8FE5B6} = {7FD06913-5FCA-433A-B1BB-D39C07DD66AE}
 		{E6D7D8B0-AEA9-46AB-8CB2-9D020F5C5072} = {7C41DF38-0A65-4334-9C90-96A8427EBF34}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8027D43-54AE-43BC-8816-0CFC6DBCB17C}
 	EndGlobalSection
 EndGlobal

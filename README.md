@@ -1,4 +1,4 @@
-# GPSOAuthSharp.NetStandard1 [![AppVeyor](https://img.shields.io/appveyor/ci/AeonLucid/gpsoauthsharp-netstandard1/master.svg?maxAge=60)](https://ci.appveyor.com/project/AeonLucid/gpsoauthsharp-netstandard1) [![NuGet](https://img.shields.io/nuget/v/GPSOAuthSharp.NetStandard1.svg?maxAge=60)](https://www.nuget.org/packages/GPSOAuthSharp.NetStandard1)
+# GPSOAuthSharp.NetStandard1 [![Build status](https://ci.appveyor.com/api/projects/status/0qh74gd1gmyanmxb/branch/master?svg=true)](https://ci.appveyor.com/project/RocketBot/gpsoauthsharp-core/branch/master) [![NuGet](https://img.shields.io/nuget/v/GPSOAuthSharp.Core.svg?maxAge=60)](https://www.nuget.org/packages/GPSOAuthSharp.Core)
 
 A .NET client library for Google Play Services OAuth written in C#.
 
@@ -14,9 +14,9 @@ This is a C# port of https://github.com/simon-weber/gpsoauth
 
 Installation is done via NuGet:
 
-    PM> Install-Package GPSOAuthSharp.NetStandard1
+    PM> Install-Package GPSOAuthSharp.Core
     
-https://www.nuget.org/packages/GPSOAuthSharp.NetStandard1/
+https://www.nuget.org/packages/GPSOAuthSharp.Core/
 
 # Usage
 Construct a `GPSOAuthSharp.GPSOAuthClient(email, password)`.
